@@ -5,10 +5,15 @@ const { createProductSchema, updateProductSchema } = require('../validators/prod
 
 const router = express.Router();
 
-router.post('/', validate(createProductSchema), productController.createProduct);
-router.get('/', productController.getAllProducts);
-router.get('/:id', productController.getProductById);
-router.put('/:id', validate(updateProductSchema), productController.updateProduct);
-router.delete('/:id', productController.deleteProduct);
+router
+  .route('/')
+  .post(validate(createProductSchema), productController.createProduct)
+  .get(productController.getAllProducts);
+
+router
+  .route('/:id')
+  .get(productController.getProductById)
+  .put(validate(updateProductSchema), productController.updateProduct)
+  .delete(productController.deleteProduct);
 
 module.exports = router;

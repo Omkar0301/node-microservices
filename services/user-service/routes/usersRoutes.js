@@ -5,10 +5,15 @@ const { createUserSchema, updateUserSchema } = require('../validators/userValida
 
 const router = express.Router();
 
-router.post('/', validate(createUserSchema), userController.createUser);
-router.get('/', userController.getAllUsers);
-router.get('/:id', userController.getUserById);
-router.put('/:id', validate(updateUserSchema), userController.updateUser);
-router.delete('/:id', userController.deleteUser);
+router
+  .route('/')
+  .post(validate(createUserSchema), userController.createUser)
+  .get(userController.getAllUsers);
+
+router
+  .route('/:id')
+  .get(userController.getUserById)
+  .put(validate(updateUserSchema), userController.updateUser)
+  .delete(userController.deleteUser);
 
 module.exports = router;
