@@ -1,0 +1,40 @@
+{
+  "name": "microservices-boilerplate",
+  "version": "1.0.0",
+  "description": "Node.js microservices boilerplate with Express.js and Sequelize ORM",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:user-service\" \"npm run dev:product-service\"",
+    "start": "concurrently \"npm run start:user-service\" \"npm run start:product-service\"",
+    "lint": "eslint . --ext .js,.json",
+    "lint:fix": "eslint . --ext .js,.json --fix",
+    "format": "prettier --write .",
+    "dev:user-service": "cd services/user-service && npm run dev",
+    "dev:product-service": "cd services/product-service && npm run dev",
+    "start:user-service": "cd services/user-service && npm start",
+    "start:product-service": "cd services/product-service && npm start",
+    "install:all": "npm install && npm run install:services",
+    "install:services": "cd services/user-service && npm install && cd ../product-service && npm install"
+  },
+  "keywords": [
+    "microservices",
+    "nodejs",
+    "express",
+    "sequelize",
+    "postgresql",
+    "boilerplate"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "prettier": "^3.2.5",
+    "winston": "^3.17.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "name": "product-service",
+  "version": "1.0.0",
+  "description": "Product microservice for managing products",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint . --ext .js,.json",
+    "lint:fix": "eslint . --ext .js,.json --fix",
+    "format": "prettier --write .",
+    "migrate": "sequelize-cli db:migrate --env development",
+    "migrate:undo": "sequelize-cli db:migrate:undo --env development",
+    "seed": "sequelize-cli db:seed:all --env development",
+    "seed:undo": "sequelize-cli db:seed:undo:all --env development",
+    "db:create": "sequelize-cli db:create",
+    "db:drop": "sequelize-cli db:drop"
+  },
+  "keywords": [
+    "product",
+    "microservice",
+    "sequelize",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sequelize": "^6.37.1",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "dotenv": "^16.4.5",
+    "joi": "^17.12.2",
+    "winston": "^3.11.0",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "sequelize-cli": "^6.6.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "prettier": "^3.2.5"
+  }
+}
