@@ -4,8 +4,8 @@
   "description": "Node.js microservices boilerplate with Express.js and Sequelize ORM",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev:user-service\" \"npm run dev:product-service\"",
-    "start": "concurrently \"npm run start:user-service\" \"npm run start:product-service\"",
+    "dev": "concurrently \"npm run dev:user-service\" \"npm run dev:product-service\" \"npm run dev:gateway\"",
+    "start": "concurrently \"npm run start:user-service\" \"npm run start:product-service\" \"npm run gateway\"",
     "lint": "eslint . --ext .js,.json",
     "lint:fix": "eslint . --ext .js,.json --fix",
     "format": "prettier --write .",
@@ -14,7 +14,9 @@
     "start:user-service": "cd services/user-service && npm start",
     "start:product-service": "cd services/product-service && npm start",
     "install:all": "npm install && npm run install:services",
-    "install:services": "cd services/user-service && npm install && cd ../product-service && npm install"
+    "install:services": "cd services/user-service && npm install && cd ../product-service && npm install",
+    "gateway": "node api-gateway.js",
+    "dev:gateway": "nodemon api-gateway.js"
   },
   "keywords": [
     "microservices",
@@ -32,9 +34,13 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-node": "^11.1.0",
     "prettier": "^3.2.5",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "nodemon": "^3.0.2"
   },
   "dependencies": {
-    "dotenv": "^17.2.1"
+    "dotenv": "^17.2.1",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "cors": "^2.8.5"
   }
 }

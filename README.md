@@ -36,6 +36,7 @@ microservices-boilerplate/
 │   │   ├── migrations/
 │   │   ├── seeders/
 │   │   ├── config/
+│   │   ├── .env.development        # Environment configuration
 │   │   └── index.js
 │   └── product-service/            # Product management microservice
 │       ├── controllers/
@@ -46,63 +47,94 @@ microservices-boilerplate/
 │       ├── migrations/
 │       ├── seeders/
 │       ├── config/
+│       ├── .env.development        # Environment configuration
 │       └── index.js
+├── api-gateway.js                  # API Gateway with env configuration
+├── .env.development                # Gateway environment configuration
 ├── .eslintrc.json
 ├── .prettierrc
 ├── .gitignore
 └── package.json
 ```
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js (v16 or higher)
-- PostgreSQL (v12 or higher)
+- PostgreSQL
 - npm or yarn
+
+### Environment Configuration
+
+Each service uses environment variables for configuration. Create `.env.development` files for each service:
+
+**Root directory (API Gateway):**
+
+```bash
+# .env.development
+GATEWAY_PORT=3000
+USER_SERVICE_URL=http://localhost:3001
+PRODUCT_SERVICE_URL=http://localhost:3002
+```
+
+**User Service (`services/user-service/.env.development`):**
+
+```bash
+PORT=3001
+DB_USER=postgres
+DB_PASSWORD=admin
+DB_NAME=user_service_dev
+DB_HOST=localhost
+DB_PORT=5432
+```
+
+**Product Service (`services/product-service/.env.development`):**
+
+```bash
+PORT=3002
+DB_USER=postgres
+DB_PASSWORD=admin
+DB_NAME=product_service_dev
+DB_HOST=localhost
+DB_PORT=5432
+```
 
 ### Installation
 
-1. **Clone the repository**
+1. **Clone the repository**:
 
    ```bash
    git clone <repository-url>
    cd microservices-boilerplate
    ```
 
-2. **Install dependencies**
+2. **Install dependencies**:
 
    ```bash
-   npm run install:all
+   npm run install:services
    ```
 
-3. **Set up databases**
+3. **Set up databases**:
 
    ```bash
    # Create databases for each service
-   createdb user_service_db
-   createdb product_service_db
+   cd services/user-service && npm run db:create
+   cd ../product-service && npm run db:create
    ```
 
-4. **Configure environment variables**
+4. **Run migrations**:
 
    ```bash
-   # Each service has its own .env.development file
-   # Update database credentials as needed
+   # Run migrations for all services
+   npm run migrate:user-service
+   npm run migrate:product-service
    ```
 
-5. **Run migrations and seeders**
+5. **Start all services**:
 
    ```bash
-   # User service
-   cd services/user-service
-   npm run migrate
-   npm run seed
-
-   # Product service
-   cd ../product-service
-   npm run migrate
-   npm run seed
+   npm run dev
    ```
 
 6. **Start the services**
@@ -122,7 +154,7 @@ microservices-boilerplate/
 - `npm run start` - Start all services in production mode
 - `npm run lint` - Lint all services
 - `npm run format` - Format all services with Prettier
-- `npm run install:all` - Install dependencies for all services
+- `npm run install:services` - Install dependencies for all services
 
 ### Service Level Scripts
 
@@ -137,7 +169,10 @@ microservices-boilerplate/
 
 ## 📊 API Endpoints
 
-### User Service (Port 3001)
+### User Service
+
+- **Base URL**: Configurable via `USER_SERVICE_URL` environment variable
+- **Default**: `http://localhost:3001`
 
 - `GET /health` - Health check endpoint
 - `POST /api/users` - Create a new user
@@ -146,7 +181,10 @@ microservices-boilerplate/
 - `PUT /api/users/:id` - Update user
 - `DELETE /api/users/:id` - Delete user
 
-### Product Service (Port 3002)
+### Product Service
+
+- **Base URL**: Configurable via `PRODUCT_SERVICE_URL` environment variable
+- **Default**: `http://localhost:3002`
 
 - `GET /health` - Health check endpoint
 - `POST /api/products` - Create a new product
@@ -154,6 +192,11 @@ microservices-boilerplate/
 - `GET /api/products/:id` - Get product by ID
 - `PUT /api/products/:id` - Update product
 - `DELETE /api/products/:id` - Delete product
+
+### API Gateway
+
+- **Port**: Configurable via `GATEWAY_PORT` environment variable
+- **Default**: `http://localhost:3000`
 
 ## 🎯 API Response Format
 
@@ -197,20 +240,14 @@ All API responses follow a consistent format:
    ├── migrations/
    ├── seeders/
    ├── config/
+   ├── .env.development    # Environment configuration
    └── index.js
    ```
 
-2. **Copy the package.json template** and update service-specific details
-
-3. **Set up Sequelize configuration**:
-   - Create `.sequelizerc`
-   - Create `config/database.js`
-
-4. **Implement the service** following the existing patterns
-
-5. **Add environment configuration** in `.env.development`
-
-6. **Update root package.json** with new service scripts
+2. **Copy package.json from existing service** and update name
+3. **Create .env.development** with appropriate port and database settings
+4. **Update API Gateway** to include new service URL in environment variables
+5. **Follow the same patterns** as existing services for consistency
 
 ### Database Migrations
 
