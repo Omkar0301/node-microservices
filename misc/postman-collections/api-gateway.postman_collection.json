@@ -1,0 +1,43 @@
+{
+  "info": {
+    "name": "API Gateway",
+    "description": "API Gateway collection for routing to microservices",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Gateway Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{gateway_url}}/health",
+          "host": ["{{gateway_url}}"],
+          "path": ["health"]
+        },
+        "description": "Check if API Gateway is running and see connected services"
+      },
+      "response": []
+    },
+    {
+      "name": "Gateway Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{gateway_url}}",
+          "host": ["{{gateway_url}}"]
+        },
+        "description": "Get API Gateway information and available endpoints"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "gateway_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}

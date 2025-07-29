@@ -1,0 +1,140 @@
+{
+  "info": {
+    "name": "User Service",
+    "description": "Complete User Service API collection for Node.js microservices boilerplate",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{user_service_url}}/health",
+          "host": ["{{user_service_url}}"],
+          "path": ["health"]
+        },
+        "description": "Check if User Service is running and healthy"
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{user_service_url}}/api/users?page=1&limit=10",
+          "host": ["{{user_service_url}}"],
+          "path": ["api", "users"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1",
+              "description": "Page number (default: 1)"
+            },
+            {
+              "key": "limit",
+              "value": "10",
+              "description": "Items per page (default: 10)"
+            }
+          ]
+        },
+        "description": "Get all users with pagination support"
+      },
+      "response": []
+    },
+    {
+      "name": "Get User by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{user_service_url}}/api/users/1",
+          "host": ["{{user_service_url}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Get a specific user by their ID"
+      },
+      "response": []
+    },
+    {
+      "name": "Create User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securepassword123\",\n  \"age\": 30\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{user_service_url}}/api/users",
+          "host": ["{{user_service_url}}"],
+          "path": ["api", "users"]
+        },
+        "description": "Create a new user with validation"
+      },
+      "response": []
+    },
+    {
+      "name": "Update User",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"age\": 31\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{user_service_url}}/api/users/1",
+          "host": ["{{user_service_url}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Update an existing user by ID"
+      },
+      "response": []
+    },
+    {
+      "name": "Delete User",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{user_service_url}}/api/users/1",
+          "host": ["{{user_service_url}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Delete a user by ID"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "user_service_url",
+      "value": "http://localhost:3001",
+      "type": "string"
+    }
+  ]
+}
