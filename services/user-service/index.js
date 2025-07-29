@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const logger = require('../../shared/utils/logger');
 const errorHandler = require('../../shared/middleware/errorHandler');
 const healthRoutes = require('./routes/health');
-const userRoutes = require('./routes/users');
+const userRoutes = require('./routes/usersRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
