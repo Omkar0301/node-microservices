@@ -6,6 +6,7 @@ const createProductSchema = Joi.object({
   price: Joi.number().positive().precision(2).required(),
   stock: Joi.number().integer().min(0).default(0),
   sku: Joi.string().min(3).max(50).required(),
+  userId: Joi.string().uuid().required(),
   isActive: Joi.boolean().default(true),
 });
 
@@ -15,10 +16,12 @@ const updateProductSchema = Joi.object({
   price: Joi.number().positive().precision(2),
   stock: Joi.number().integer().min(0),
   sku: Joi.string().min(3).max(50),
+  userId: Joi.string().uuid(),
   isActive: Joi.boolean(),
 }).min(1);
 
-module.exports = {
-  createProductSchema,
-  updateProductSchema,
-};
+const getByIdsSchema = Joi.object({
+  ids: Joi.array().items(Joi.string().uuid()).min(1).required(),
+});
+
+module.exports = { createProductSchema, updateProductSchema, getByIdsSchema };

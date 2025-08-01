@@ -1,6 +1,6 @@
 # Node.js Microservices Boilerplate
 
-A production-ready, scalable microservices boilerplate built with Node.js, Express.js, and Sequelize ORM for PostgreSQL. This boilerplate follows clean architecture principles, SOLID principles, and DRY practices.
+A production-ready, scalable microservices boilerplate built with Node.js, Express.js, and Sequelize ORM for PostgreSQL. This boilerplate follows clean architecture principles, SOLID principles, and DRY practices with shared utilities to minimize code duplication.
 
 ## 🏗️ Architecture Overview
 
@@ -8,46 +8,74 @@ This boilerplate implements a microservices architecture with:
 
 - **Independent services**: Each microservice has its own codebase and database
 - **Clean architecture**: Separation of concerns with controllers, services, models, and validators
+- **DRY Implementation**: Shared utilities and base classes to minimize code duplication
 - **Standardized API responses**: Consistent response format across all services
 - **Centralized error handling**: Global error handling middleware
+- **Service Registry**: Dynamic service discovery and load balancing
 - **Health check endpoints**: Service health monitoring
 
 ## 📁 Project Structure
 
 ```
 microservices-boilerplate/
+├── misc/
+│   └── postman-collections/        # Postman collections for API testing
+│       ├── full-collection.postman_collection.json
+│       ├── user-service.postman_collection.json
+│       └── product-service.postman_collection.json
+│
 ├── shared/                          # Shared utilities and configurations
-│   ├── utils/
-│   │   ├── logger.js               # Winston logger configuration
-│   │   ├── responseFormatter.js    # Standardized API responses
-│   │   └── asyncHandler.js         # Async error handling wrapper
+│   ├── config/
+│   │   └── database.js             # Database configuration
+│   │
 │   ├── middleware/
 │   │   ├── errorHandler.js         # Global error handling middleware
 │   │   └── validation.js           # Request validation middleware
-│   └── config/
-│       └── database.js             # Shared database configuration
+│   │
+│   └── utils/
+│       ├── asyncHandler.js         # Async error handling wrapper
+│       ├── dataJoiner.js           # Utility for joining data
+│       ├── httpClient.js           # HTTP client utilities
+│       ├── logger.js               # Winston logger configuration
+│       ├── responseFormatter.js    # Standardized API responses
+│       └── serviceRegistry.js      # Service discovery and load balancing
 ├── services/                        # Individual microservices
-│   ├── user-service/               # User management microservice
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── validators/
-│   │   ├── migrations/
-│   │   ├── seeders/
-│   │   ├── config/
-│   │   ├── .env.development        # Environment configuration
-│   │   └── index.js
-│   └── product-service/            # Product management microservice
-│       ├── controllers/
-│       ├── services/
-│       ├── models/
-│       ├── routes/
-│       ├── validators/
-│       ├── migrations/
-│       ├── seeders/
+│   └── user-service/               # User management microservice
 │       ├── config/
+│       │   └── database.js         # Database configuration
+│       ├── controllers/
+│       │   └── userController.js   # User controller
+│       ├── migrations/
+│       ├── models/
+│       │   ├── User.js             # User model
+│       │   └── index.js            # Sequelize models initialization
+│       ├── routes/
+│       │   ├── health.js           # Health check route
+│       │   └── usersRoutes.js      # User routes
+│       ├── services/
+│       │   └── userService.js      # Business logic
+│       ├── validators/
+│       │   └── userValidator.js    # Request validation
 │       ├── .env.development        # Environment configuration
+│       └── index.js
+│   └── product-service/            # Product management microservice
+│       ├── config/
+│       │   └── database.js          # Database configuration
+│       ├── controllers/
+│       │   └── productController.js # Product controller
+│       ├── migrations/
+│       ├── migrations/              # Database migrations
+│       ├── models/
+│       │   ├── Product.js           # Product model
+│       │   └── index.js             # Sequelize models initialization
+│       ├── routes/
+│       │   ├── health.js            # Health check route
+│       │   └── productsRoutes.js    # Product routes
+│       ├── services/
+│       │   └── productService.js    # Business logic
+│       ├── validators/
+│       │   └── productValidator.js  # Request validation
+│       ├── .env.development         # Environment configuration
 │       └── index.js
 ├── api-gateway.js                  # API Gateway with env configuration
 ├── .env.development                # Gateway environment configuration
@@ -150,53 +178,68 @@ DB_PORT=5432
 
 ### Root Level Scripts
 
-- `npm run dev` - Start all services in development mode
+- `npm run dev` - Start all services in development mode using concurrently
 - `npm run start` - Start all services in production mode
+- `npm run services:dev` - Start only the microservices in development mode
+- `npm run services:start` - Start only the microservices in production mode
 - `npm run lint` - Lint all services
-- `npm run format` - Format all services with Prettier
+- `npm run lint:fix` - Fix linting issues
+- `npm run format` - Format all code with Prettier
+- `npm run install:all` - Install root and all service dependencies
 - `npm run install:services` - Install dependencies for all services
 
 ### Service Level Scripts
 
-- `npm run dev` - Start service in development mode with nodemon
-- `npm run start` - Start service in production mode
-- `npm run lint` - Lint the service
-- `npm run format` - Format the service with Prettier
+Each service (user-service, product-service) supports these scripts:
+
+- `npm run dev` - Start service with nodemon for development
+- `npm start` - Start service in production mode
+- `npm run lint` - Lint the service code
+- `npm run lint:fix` - Fix linting issues
+- `npm run format` - Format code with Prettier
 - `npm run migrate` - Run database migrations
-- `npm run migrate:undo` - Undo last migration
+- `npm run migrate:undo` - Undo the most recent migration
 - `npm run seed` - Run database seeders
 - `npm run seed:undo` - Undo all seeders
+- `npm run db:create` - Create the database
+- `npm run db:drop` - Drop the database
 
 ## 📊 API Endpoints
 
 ### User Service
 
-- **Base URL**: Configurable via `USER_SERVICE_URL` environment variable
-- **Default**: `http://localhost:3001`
-
-- `GET /health` - Health check endpoint
-- `POST /api/users` - Create a new user
-- `GET /api/users` - Get all users (with pagination)
-- `GET /api/users/:id` - Get user by ID
-- `PUT /api/users/:id` - Update user
-- `DELETE /api/users/:id` - Delete user
+- **Base URL**: `http://localhost:3001`
+- **Health Check**: `GET /api/users/health`
+- **Users**:
+  - `POST /api/users` - Create a new user
+  - `GET /api/users` - Get all users (with pagination)
+  - `GET /api/users/:id` - Get user by ID
+  - `PUT /api/users/:id` - Update user
+  - `DELETE /api/users/:id` - Delete user
+  - `POST /api/users/batch` - Get multiple users by IDs
 
 ### Product Service
 
-- **Base URL**: Configurable via `PRODUCT_SERVICE_URL` environment variable
-- **Default**: `http://localhost:3002`
-
-- `GET /health` - Health check endpoint
-- `POST /api/products` - Create a new product
-- `GET /api/products` - Get all products (with pagination)
-- `GET /api/products/:id` - Get product by ID
-- `PUT /api/products/:id` - Update product
-- `DELETE /api/products/:id` - Delete product
+- **Base URL**: `http://localhost:3002`
+- **Health Check**: `GET /api/products/health`
+- **Products**:
+  - `POST /api/products` - Create a new product
+  - `GET /api/products` - Get all products (with pagination)
+  - `GET /api/products/:id` - Get product by ID
+  - `PUT /api/products/:id` - Update product
+  - `DELETE /api/products/:id` - Delete product
+  - `POST /api/products/batch` - Get multiple products by IDs
+  - `POST /api/products/by-users` - Get products by user IDs
 
 ### API Gateway
 
-- **Port**: Configurable via `GATEWAY_PORT` environment variable
-- **Default**: `http://localhost:3000`
+- **Port**: 3000 (configurable via `GATEWAY_PORT`)
+- **Base URL**: `http://localhost:3000`
+- **Features**:
+  - Request routing to appropriate services
+  - Load balancing between service instances
+  - Service discovery
+  - Request/Response logging
 
 ## 🎯 API Response Format
 
@@ -295,11 +338,3 @@ All errors are automatically handled by the global error handler. Custom errors 
 3. **Process manager** - Use PM2 for process management
 4. **Reverse proxy** - Use Nginx or similar for load balancing
 5. **SSL/TLS** - Enable HTTPS
-
-## 📞 Support
-
-For questions or issues, please create an issue in the repository or refer to the documentation.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

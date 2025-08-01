@@ -1,7 +1,7 @@
 {
   "info": {
+    "_postman_id": "",
     "name": "Product Service",
-    "description": "Complete Product Service API collection for Node.js microservices boilerplate",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -9,131 +9,79 @@
       "name": "Health Check",
       "request": {
         "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{product_service_url}}/health",
-          "host": ["{{product_service_url}}"],
-          "path": ["health"]
-        },
-        "description": "Check if Product Service is running and healthy"
-      },
-      "response": []
-    },
-    {
-      "name": "Get All Products",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{product_service_url}}/api/products?page=1&limit=10",
-          "host": ["{{product_service_url}}"],
-          "path": ["api", "products"],
-          "query": [
-            {
-              "key": "page",
-              "value": "1",
-              "description": "Page number (default: 1)"
-            },
-            {
-              "key": "limit",
-              "value": "10",
-              "description": "Items per page (default: 10)"
-            }
-          ]
-        },
-        "description": "Get all products with pagination support"
-      },
-      "response": []
-    },
-    {
-      "name": "Get Product by ID",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{product_service_url}}/api/products/1",
-          "host": ["{{product_service_url}}"],
-          "path": ["api", "products", "1"]
-        },
-        "description": "Get a specific product by their ID"
-      },
-      "response": []
+        "url": "{{base_url}}/api/products/health"
+      }
     },
     {
       "name": "Create Product",
       "request": {
         "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
+        "url": "{{base_url}}/api/v1/products",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Wireless Headphones\",\n  \"description\": \"High-quality wireless headphones with noise cancellation\",\n  \"price\": 199.99,\n  \"stock\": 50,\n  \"category\": \"Electronics\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{product_service_url}}/api/products",
-          "host": ["{{product_service_url}}"],
-          "path": ["api", "products"]
-        },
-        "description": "Create a new product with validation"
-      },
-      "response": []
+          "raw": "{\n    \"name\": \"Sample Product\",\n    \"description\": \"This is a sample product\",\n    \"price\": 99.99,\n    \"userId\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "Get All Products",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/products"
+      }
+    },
+    {
+      "name": "Get Product By ID",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/products/1"
+      }
     },
     {
       "name": "Update Product",
       "request": {
         "method": "PUT",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
+        "url": "{{base_url}}/api/v1/products/1",
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Premium Wireless Headphones\",\n  \"description\": \"Updated description with better features\",\n  \"price\": 249.99,\n  \"stock\": 45,\n  \"category\": \"Electronics\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{product_service_url}}/api/products/1",
-          "host": ["{{product_service_url}}"],
-          "path": ["api", "products", "1"]
-        },
-        "description": "Update an existing product by ID"
-      },
-      "response": []
+          "raw": "{\n    \"name\": \"Updated Product\",\n    \"description\": \"Updated description\",\n    \"price\": 129.99\n}"
+        }
+      }
     },
     {
       "name": "Delete Product",
       "request": {
         "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "{{product_service_url}}/api/products/1",
-          "host": ["{{product_service_url}}"],
-          "path": ["api", "products", "1"]
-        },
-        "description": "Delete a product by ID"
-      },
-      "response": []
+        "url": "{{base_url}}/api/v1/products/1"
+      }
+    },
+    {
+      "name": "Get Products By IDs (Batch)",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/products/batch",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"ids\": [1, 2, 3]\n}"
+        }
+      }
+    },
+    {
+      "name": "Get Products By User IDs",
+      "request": {
+        "method": "POST",
+        "url": "{{base_url}}/api/products/by-users",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"ids\": [1, 2, 3]\n}"
+        }
+      }
     }
   ],
   "variable": [
     {
-      "key": "product_service_url",
-      "value": "http://localhost:3002",
+      "key": "base_url",
+      "value": "http://localhost:3000",
       "type": "string"
     }
   ]

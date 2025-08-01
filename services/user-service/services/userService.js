@@ -1,88 +1,68 @@
 const { User } = require('../models');
-const ApiResponse = require('../../../shared/utils/responseFormatter');
+const dataJoiner = require('../../../shared/utils/dataJoiner');
 
 class UserService {
   async createUser(userData) {
-    try {
-      const user = await User.create(userData);
-      return user;
-    } catch (error) {
-      throw error;
-    }
+    const user = await User.create(userData);
+    const userResponse = user.toJSON();
+    delete userResponse.password;
+    return userResponse;
   }
 
-  async getAllUsers(limit = 10, offset = 0) {
-    try {
-      const { count, rows } = await User.findAndCountAll({
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        order: [['createdAt', 'DESC']],
-        attributes: { exclude: ['password'] },
-      });
+  async getAllUsers(limit, offset, includeProducts = false) {
+    const { count, rows } = await User.findAndCountAll({
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
+      attributes: { exclude: ['password'] },
+    });
 
-      return {
-        users: rows,
-        pagination: {
-          total: count,
-          limit: parseInt(limit),
-          offset: parseInt(offset),
-          pages: Math.ceil(count / limit),
-        },
-      };
-    } catch (error) {
-      throw error;
+    let users = rows.map(user => user.toJSON());
+
+    if (includeProducts) {
+      users = await dataJoiner.joinData(users, {
+        serviceName: 'productService',
+        endpointName: 'getProductsByUserIds',
+        foreignKey: 'id',
+        joinKey: 'userId',
+        as: 'products',
+      });
     }
+
+    return {
+      users,
+      pagination: { total: count, limit, offset, pages: Math.ceil(count / limit) },
+    };
   }
 
   async getUserById(id) {
-    try {
-      const user = await User.findByPk(id, {
-        attributes: { exclude: ['password'] },
-      });
-
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      return user;
-    } catch (error) {
-      throw error;
-    }
+    const user = await User.findByPk(id, { attributes: { exclude: ['password'] } });
+    if (!user) throw new Error('User not found');
+    return user.toJSON();
   }
 
   async updateUser(id, updateData) {
-    try {
-      const user = await User.findByPk(id);
-
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      await user.update(updateData);
-
-      // Remove password from response
-      const userResponse = user.toJSON();
-      delete userResponse.password;
-
-      return userResponse;
-    } catch (error) {
-      throw error;
-    }
+    const user = await User.findByPk(id);
+    if (!user) throw new Error('User not found');
+    await user.update(updateData);
+    const userResponse = user.toJSON();
+    delete userResponse.password;
+    return userResponse;
   }
 
   async deleteUser(id) {
-    try {
-      const user = await User.findByPk(id);
+    const user = await User.findByPk(id);
+    if (!user) throw new Error('User not found');
+    await user.destroy();
+  }
 
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      await user.destroy();
-      return { message: 'User deleted successfully' };
-    } catch (error) {
-      throw error;
-    }
+  async getUsersByIds(userIds) {
+    if (!Array.isArray(userIds) || !userIds.length) throw new Error('Invalid user IDs');
+    const users = await User.findAll({
+      where: { id: userIds },
+      attributes: { exclude: ['password'] },
+    });
+    return users.map(user => user.toJSON());
   }
 }
 

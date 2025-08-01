@@ -12,10 +12,10 @@ const updateUserSchema = Joi.object({
   firstName: Joi.string().min(2).max(50),
   lastName: Joi.string().min(2).max(50),
   password: Joi.string().min(6).max(100),
-  isActive: Joi.boolean(),
 }).min(1);
 
-module.exports = {
-  createUserSchema,
-  updateUserSchema,
-};
+const getByIdsSchema = Joi.object({
+  ids: Joi.array().items(Joi.string().uuid()).min(1).required(),
+});
+
+module.exports = { createUserSchema, updateUserSchema, getByIdsSchema };

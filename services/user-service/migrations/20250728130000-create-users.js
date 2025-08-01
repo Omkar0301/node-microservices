@@ -16,14 +16,14 @@ module.exports = {
           isEmail: true,
         },
       },
-      first_name: {
+      firstName: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
           len: [2, 50],
         },
       },
-      last_name: {
+      lastName: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
@@ -37,16 +37,16 @@ module.exports = {
           len: [6, 100],
         },
       },
-      is_active: {
+      isActive: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
       },
-      created_at: {
+      createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,
       },
-      updated_at: {
+      updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,

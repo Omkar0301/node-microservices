@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Microservices Boilerplate - Full Collection",
-    "description": "Complete Postman collection for all microservices endpoints",
+    "_postman_id": "",
+    "name": "Microservices Boilerplate",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -44,7 +44,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/api/users/health",
+              "raw": "{{base_url}}/api/users/health",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users", "health"]
             },
@@ -57,7 +57,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/api/users?page=1&limit=10",
+              "raw": "{{base_url}}/api/users?page=1&limit=10",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users"],
               "query": [
@@ -81,7 +81,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/api/users/1",
+              "raw": "{{base_url}}/api/users/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users", "1"]
             }
@@ -107,7 +107,7 @@
               }
             },
             "url": {
-              "raw": "{{gateway_url}}/api/users",
+              "raw": "{{base_url}}/api/users",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users"]
             }
@@ -133,7 +133,7 @@
               }
             },
             "url": {
-              "raw": "{{gateway_url}}/api/users/1",
+              "raw": "{{base_url}}/api/users/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users", "1"]
             }
@@ -145,7 +145,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/api/users/1",
+              "raw": "{{base_url}}/api/users/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users", "1"]
             }
@@ -162,7 +162,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/api/products/health",
+              "raw": "{{base_url}}/api/products/health",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products", "health"]
             },
@@ -175,7 +175,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/api/products?page=1&limit=10",
+              "raw": "{{base_url}}/api/products?page=1&limit=10",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products"],
               "query": [
@@ -199,7 +199,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/api/products/1",
+              "raw": "{{base_url}}/api/products/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products", "1"]
             }
@@ -225,7 +225,7 @@
               }
             },
             "url": {
-              "raw": "{{gateway_url}}/api/products",
+              "raw": "{{base_url}}/api/products",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products"]
             }
@@ -251,7 +251,7 @@
               }
             },
             "url": {
-              "raw": "{{gateway_url}}/api/products/1",
+              "raw": "{{base_url}}/api/products/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products", "1"]
             }
@@ -263,7 +263,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{gateway_url}}/api/products/1",
+              "raw": "{{base_url}}/api/products/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products", "1"]
             }

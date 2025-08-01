@@ -46,6 +46,10 @@ module.exports = sequelize => {
           len: [3, 50],
         },
       },
+      userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
       isActive: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
@@ -54,7 +58,6 @@ module.exports = sequelize => {
     {
       tableName: 'products',
       timestamps: true,
-      underscored: true,
     }
   );
 

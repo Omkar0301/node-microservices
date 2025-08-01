@@ -32,7 +32,7 @@ app.use('/api/products', productRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
-  const ApiResponse = require('../../../shared/utils/responseFormatter');
+  const ApiResponse = require('../../shared/utils/responseFormatter');
   const response = ApiResponse.notFound('Route not found');
   res.status(response.statusCode).json(response);
 });
