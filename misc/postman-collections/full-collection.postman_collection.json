@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "",
+    "_postman_id": "a7f9b3c2-4e5a-4f8b-9c2d-7b8e3f6a1d2e",
     "name": "Microservices Boilerplate",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -36,6 +36,152 @@
       ]
     },
     {
+      "name": "Auth Service",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/health",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "auth", "health"]
+            },
+            "description": "Check if Auth Service is running and healthy"
+          }
+        },
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-auth-type",
+                "value": "token",
+                "description": "Set to 'cookie' for cookie-based auth or 'token' for token response"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securepassword123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/register",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new user. Returns user data and tokens (or sets cookies if x-auth-type is 'cookie')."
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-auth-type",
+                "value": "token",
+                "description": "Set to 'cookie' for cookie-based auth or 'token' for token response"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securepassword123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/login",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Log in a user. Returns user data and tokens (or sets cookies if x-auth-type is 'cookie')."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-auth-type",
+                "value": "token",
+                "description": "Set to 'cookie' for cookie-based auth or 'token' for token response"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/refresh-token",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "auth", "refresh-token"]
+            },
+            "description": "Refresh access token using a refresh token. Returns new tokens (or sets cookies if x-auth-type is 'cookie')."
+          }
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-auth-type",
+                "value": "token",
+                "description": "Set to 'cookie' to clear auth cookies"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/auth/logout",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Log out a user. Clears cookies if x-auth-type is 'cookie'."
+          }
+        }
+      ]
+    },
+    {
       "name": "User Service",
       "item": [
         {
@@ -44,7 +190,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/users/health",
+              "raw": "{{gateway_url}}/api/users/health",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users", "health"]
             },
@@ -55,9 +201,15 @@
           "name": "Get All Users",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/api/users?page=1&limit=10",
+              "raw": "{{gateway_url}}/api/users?page=1&limit=10",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users"],
               "query": [
@@ -72,19 +224,27 @@
                   "description": "Items per page (default: 10)"
                 }
               ]
-            }
+            },
+            "description": "Retrieve a paginated list of users. Requires authentication."
           }
         },
         {
           "name": "Get User by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/api/users/1",
+              "raw": "{{gateway_url}}/api/users/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users", "1"]
-            }
+            },
+            "description": "Retrieve a user by ID. Requires authentication."
           }
         },
         {
@@ -99,7 +259,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securepassword123\",\n  \"age\": 30\n}",
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securepassword123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -107,10 +267,11 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/users",
+              "raw": "{{gateway_url}}/api/users",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users"]
-            }
+            },
+            "description": "Create a new user. Note: Use /api/auth/register for user registration with auth."
           }
         },
         {
@@ -121,11 +282,16 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"age\": 31\n}",
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane.doe@example.com\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -133,22 +299,82 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/users/1",
+              "raw": "{{gateway_url}}/api/users/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users", "1"]
-            }
+            },
+            "description": "Update a user by ID. Requires authentication."
           }
         },
         {
           "name": "Delete User",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/api/users/1",
+              "raw": "{{gateway_url}}/api/users/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "users", "1"]
-            }
+            },
+            "description": "Delete a user by ID. Requires authentication."
+          }
+        },
+        {
+          "name": "Get User by Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gateway_url}}/api/users/by-email?email=john.doe@example.com",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "users", "by-email"],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "john.doe@example.com",
+                  "description": "Email of the user to retrieve"
+                }
+              ]
+            },
+            "description": "Retrieve a user by email. Used internally by auth service."
+          }
+        },
+        {
+          "name": "Get Users by IDs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [1, 2, 3]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/users/batch",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "users", "batch"]
+            },
+            "description": "Retrieve multiple users by their IDs. Requires authentication."
           }
         }
       ]
@@ -162,7 +388,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/products/health",
+              "raw": "{{gateway_url}}/api/products/health",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products", "health"]
             },
@@ -173,9 +399,15 @@
           "name": "Get All Products",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/api/products?page=1&limit=10",
+              "raw": "{{gateway_url}}/api/products?page=1&limit=10",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products"],
               "query": [
@@ -190,19 +422,27 @@
                   "description": "Items per page (default: 10)"
                 }
               ]
-            }
+            },
+            "description": "Retrieve a paginated list of products. Requires authentication."
           }
         },
         {
           "name": "Get Product by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/api/products/1",
+              "raw": "{{gateway_url}}/api/products/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products", "1"]
-            }
+            },
+            "description": "Retrieve a product by ID. Requires authentication."
           }
         },
         {
@@ -213,6 +453,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
               }
             ],
             "body": {
@@ -225,10 +470,11 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/products",
+              "raw": "{{gateway_url}}/api/products",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products"]
-            }
+            },
+            "description": "Create a new product. Requires authentication."
           }
         },
         {
@@ -239,6 +485,11 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
               }
             ],
             "body": {
@@ -251,22 +502,94 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/products/1",
+              "raw": "{{gateway_url}}/api/products/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products", "1"]
-            }
+            },
+            "description": "Update a product by ID. Requires authentication."
           }
         },
         {
           "name": "Delete Product",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
+              }
+            ],
             "url": {
-              "raw": "{{base_url}}/api/products/1",
+              "raw": "{{gateway_url}}/api/products/1",
               "host": ["{{gateway_url}}"],
               "path": ["api", "products", "1"]
-            }
+            },
+            "description": "Delete a product by ID. Requires authentication."
+          }
+        },
+        {
+          "name": "Get Products by User IDs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userIds\": [1, 2, 3]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/products/by-users",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products", "by-users"]
+            },
+            "description": "Retrieve products associated with specific user IDs. Requires authentication."
+          }
+        },
+        {
+          "name": "Get Products by IDs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "description": "JWT token for authentication"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [1, 2, 3]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{gateway_url}}/api/products/batch",
+              "host": ["{{gateway_url}}"],
+              "path": ["api", "products", "batch"]
+            },
+            "description": "Retrieve multiple products by their IDs. Requires authentication."
           }
         }
       ]
@@ -277,6 +600,18 @@
       "key": "gateway_url",
       "value": "http://localhost:3000",
       "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string",
+      "description": "JWT access token obtained from /api/auth/login or /api/auth/register"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string",
+      "description": "Refresh token obtained from /api/auth/login or /api/auth/register"
     }
   ]
 }

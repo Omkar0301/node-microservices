@@ -1,4 +1,6 @@
+/* eslint-disable node/no-unsupported-features/es-syntax */
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const logger = require('./logger');
 const serviceRegistry = require('./serviceRegistry');
 
@@ -10,15 +12,27 @@ class HttpClient {
     });
   }
 
-  async request(serviceName, endpointName, params = {}, data = null) {
+  async request(serviceName, endpointName, params = {}, data = null, options = {}) {
     const { url, endpoint } = serviceRegistry.getServiceEndpoint(serviceName, endpointName);
+    const finalUrl = this.buildUrl(url, endpoint.path, params);
+
+    const headers = { ...(options.headers || {}) };
+
+    if (options.internal) {
+      const internalToken = jwt.sign({ service: serviceName }, process.env.INTERNAL_SECRET, {
+        expiresIn: '5m',
+      });
+      headers['Authorization'] = `Internal ${internalToken}`;
+    }
+
     try {
-      const finalUrl = this.buildUrl(url, endpoint.path, params);
       const response = await this.instance({
         method: endpoint.method,
         url: finalUrl,
         data,
+        headers,
       });
+
       return response.data.data || response.data;
     } catch (error) {
       logger.error(`HTTP request failed to ${serviceName}.${endpointName}: ${error.message}`);

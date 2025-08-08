@@ -26,6 +26,7 @@ class UserService {
         foreignKey: 'id',
         joinKey: 'userId',
         as: 'products',
+        internal: true,
       });
     }
 
@@ -37,6 +38,12 @@ class UserService {
 
   async getUserById(id) {
     const user = await User.findByPk(id, { attributes: { exclude: ['password'] } });
+    if (!user) throw new Error('User not found');
+    return user.toJSON();
+  }
+
+  async getUserByEmail(email) {
+    const user = await User.findOne({ where: { email }, attributes: { include: ['password'] } });
     if (!user) throw new Error('User not found');
     return user.toJSON();
   }

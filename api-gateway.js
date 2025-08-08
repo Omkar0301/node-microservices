@@ -3,16 +3,20 @@ require('dotenv').config({ path: '.env.development' });
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const logger = require('./shared/utils/logger');
 const ApiResponse = require('./shared/utils/responseFormatter');
+const { authenticateJWT } = require('./shared/utils/authUtils');
 
 const app = express();
 const PORT = process.env.GATEWAY_PORT || 3000;
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:3001';
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:3002';
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://localhost:3003';
 
-// Enable CORS for all routes
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
+app.use(cookieParser());
+app.use(express.json());
 
 // Logging middleware
 app.use((req, res, next) => {
@@ -33,12 +37,43 @@ app.get('/health', (req, res) => {
     services: {
       userService: USER_SERVICE_URL,
       productService: PRODUCT_SERVICE_URL,
+      authService: AUTH_SERVICE_URL,
     },
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
   };
 
   res.json(ApiResponse.success(healthData, 'Gateway health check successful'));
+});
+
+// Proxy middleware for Auth Service
+const authServiceProxy = createProxyMiddleware({
+  target: AUTH_SERVICE_URL,
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/auth': '/api/auth',
+  },
+  onError: (err, req, res) => {
+    logger.error('Auth Service Error', {
+      error: err.message,
+      service: 'auth-service',
+      method: req.method,
+      path: req.path,
+    });
+
+    if (!res.headersSent) {
+      res
+        .status(503)
+        .json(ApiResponse.error('Auth Service unavailable', 503, { originalError: err.message }));
+    }
+  },
+  onProxyReq: (proxyReq, req, res) => {
+    logger.info(`${req.method} ${req.path} -> Auth Service (${AUTH_SERVICE_URL})`, {
+      method: req.method,
+      path: req.path,
+      target: 'auth-service',
+    });
+  },
 });
 
 // Proxy middleware for User Service
@@ -104,19 +139,22 @@ const productServiceProxy = createProxyMiddleware({
 });
 
 // Route requests to appropriate services
-app.use('/api/users', userServiceProxy);
-app.use('/api/products', productServiceProxy);
+app.use('/api/auth', authServiceProxy);
+app.use('/api/users', authenticateJWT, userServiceProxy);
+app.use('/api/products', authenticateJWT, productServiceProxy);
 
 // Default route
 app.get('/', (req, res) => {
   const gatewayInfo = {
     message: 'API Gateway is running',
     endpoints: {
+      auth: '/api/auth/*',
       users: '/api/users/*',
       products: '/api/products/*',
       health: '/health',
     },
     services: {
+      authService: AUTH_SERVICE_URL,
       userService: USER_SERVICE_URL,
       productService: PRODUCT_SERVICE_URL,
     },
@@ -150,9 +188,11 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   logger.info(`🚀 API Gateway started successfully`, {
     port: PORT,
+    authService: AUTH_SERVICE_URL,
     userService: USER_SERVICE_URL,
     productService: PRODUCT_SERVICE_URL,
     endpoints: {
+      auth: `http://localhost:${PORT}/api/auth/*`,
       users: `http://localhost:${PORT}/api/users/*`,
       products: `http://localhost:${PORT}/api/products/*`,
       health: `http://localhost:${PORT}/health`,

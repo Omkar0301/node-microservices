@@ -24,6 +24,12 @@ class UserController {
     return res.json(ApiResponse.success(user, 'User retrieved successfully'));
   });
 
+  getUserByEmail = asyncHandler(async (req, res) => {
+    const { email } = req.query;
+    const user = await userService.getUserByEmail(email);
+    return res.json(ApiResponse.success([user], 'User retrieved successfully'));
+  });
+
   updateUser = asyncHandler(async (req, res) => {
     const user = await userService.updateUser(req.params.id, req.body);
     return res.json(ApiResponse.success(user, 'User updated successfully'));

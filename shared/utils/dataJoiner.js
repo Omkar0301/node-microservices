@@ -3,7 +3,10 @@ const httpClient = require('./httpClient');
 const logger = require('./logger');
 
 class DataJoiner {
-  async joinData(mainData, { serviceName, endpointName, foreignKey, joinKey, as }) {
+  async joinData(
+    mainData,
+    { serviceName, endpointName, foreignKey, joinKey, as, internal = false }
+  ) {
     const dataArray = Array.isArray(mainData) ? mainData : [mainData];
     const joinIds = [...new Set(dataArray.map(item => item[foreignKey]).filter(id => id))];
 
@@ -14,7 +17,13 @@ class DataJoiner {
 
     try {
       logger.info(`Joining data from ${serviceName}.${endpointName} with IDs: ${joinIds}`);
-      const joinedData = await httpClient.request(serviceName, endpointName, {}, { ids: joinIds });
+      const joinedData = await httpClient.request(
+        serviceName,
+        endpointName,
+        {},
+        { ids: joinIds },
+        { internal }
+      );
       const joinedDataMap = new Map();
       joinedData.forEach(item => {
         const key = item[joinKey];

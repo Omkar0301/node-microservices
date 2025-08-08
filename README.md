@@ -1,171 +1,226 @@
 # Node.js Microservices Boilerplate
 
-A production-ready, scalable microservices boilerplate built with Node.js, Express.js, and Sequelize ORM for PostgreSQL. This boilerplate follows clean architecture principles, SOLID principles, and DRY practices with shared utilities to minimize code duplication.
+A production-ready, scalable microservices boilerplate built with Node.js, Express.js, and Sequelize ORM. This boilerplate follows clean architecture principles, SOLID principles, and DRY practices with shared utilities to minimize code duplication.
 
 ## 🏗️ Architecture Overview
 
 This boilerplate implements a microservices architecture with:
 
-- **Independent services**: Each microservice has its own codebase and database
-- **Clean architecture**: Separation of concerns with controllers, services, models, and validators
-- **DRY Implementation**: Shared utilities and base classes to minimize code duplication
+- **Independent services**: Each microservice has its own codebase and can have its own database
+- **Clean architecture**: Clear separation of concerns with controllers, services, models, and validators
+- **DRY Implementation**: Shared utilities and middleware to minimize code duplication
+- **JWT-based Authentication**: Secure authentication with access and refresh tokens
 - **Standardized API responses**: Consistent response format across all services
 - **Centralized error handling**: Global error handling middleware
-- **Service Registry**: Dynamic service discovery and load balancing
+- **API Gateway**: Single entry point for all microservices
 - **Health check endpoints**: Service health monitoring
+- **Cookie and Token-based Auth**: Support for both cookie-based and token-based authentication
 
 ## 📁 Project Structure
 
-```
+````
 microservices-boilerplate/
 ├── misc/
 │   └── postman-collections/        # Postman collections for API testing
 │       ├── full-collection.postman_collection.json
+│       ├── auth-service.postman_collection.json
 │       ├── user-service.postman_collection.json
 │       └── product-service.postman_collection.json
 │
-├── shared/                          # Shared utilities and configurations
-│   ├── config/
-│   │   └── database.js             # Database configuration
+├── services/                       # Individual microservices
+│   ├── auth-service/              # Authentication service
+│   ├── user-service/              # User management service
+│   └── product-service/           # Product management service
+│
+├── shared/                         # Shared utilities and configurations
+│   ├── config/                    # Configuration files
+│   │   └── database.js            # Database configuration
 │   │
-│   ├── middleware/
-│   │   ├── errorHandler.js         # Global error handling middleware
-│   │   └── validation.js           # Request validation middleware
+│   ├── middleware/                # Express middleware
+│   │   ├── errorHandler.js        # Global error handling
+│   │   └── validation.js          # Request validation
 │   │
-│   └── utils/
-│       ├── asyncHandler.js         # Async error handling wrapper
-│       ├── dataJoiner.js           # Utility for joining data
-│       ├── httpClient.js           # HTTP client utilities
-│       ├── logger.js               # Winston logger configuration
-│       ├── responseFormatter.js    # Standardized API responses
-│       └── serviceRegistry.js      # Service discovery and load balancing
-├── services/                        # Individual microservices
-│   └── user-service/               # User management microservice
-│       ├── config/
-│       │   └── database.js         # Database configuration
-│       ├── controllers/
-│       │   └── userController.js   # User controller
-│       ├── migrations/
-│       ├── models/
-│       │   ├── User.js             # User model
-│       │   └── index.js            # Sequelize models initialization
-│       ├── routes/
-│       │   ├── health.js           # Health check route
-│       │   └── usersRoutes.js      # User routes
-│       ├── services/
-│       │   └── userService.js      # Business logic
-│       ├── validators/
-│       │   └── userValidator.js    # Request validation
-│       ├── .env.development        # Environment configuration
-│       └── index.js
-│   └── product-service/            # Product management microservice
-│       ├── config/
-│       │   └── database.js          # Database configuration
-│       ├── controllers/
-│       │   └── productController.js # Product controller
-│       ├── migrations/
-│       ├── migrations/              # Database migrations
-│       ├── models/
-│       │   ├── Product.js           # Product model
-│       │   └── index.js             # Sequelize models initialization
-│       ├── routes/
-│       │   ├── health.js            # Health check route
-│       │   └── productsRoutes.js    # Product routes
-│       ├── services/
-│       │   └── productService.js    # Business logic
-│       ├── validators/
-│       │   └── productValidator.js  # Request validation
-│       ├── .env.development         # Environment configuration
-│       └── index.js
+│   └── utils/                     # Utility functions
+│       ├── asyncHandler.js        # Async/await error handler
+│       ├── logger.js              # Winston logger setup
+│       └── responseFormatter.js   # Standard API responses
+│
+├── api-gateway.js                 # API Gateway configuration
+├── run-services.js                # Script to run all services
+├── install-services.js            # Script to install service dependencies
+├── package.json                   # Root package.json
+└── .env.development               # Environment variables
+## 🚀 Services
+
+### Auth Service
+- **Purpose**: Handles user authentication and authorization
+- **Port**: 3001
+- **Endpoints**:
+  - `POST /api/auth/register` - Register a new user
+  - `POST /api/auth/login` - User login
+  - `POST /api/auth/refresh-token` - Refresh access token
+  - `POST /api/auth/logout` - Logout user
+  - `GET /api/auth/health` - Health check
+
+### User Service
+- **Purpose**: Manages user data and profiles
+- **Port**: 3002
+- **Endpoints**:
+  - `GET /api/users` - Get all users (with pagination)
+  - `GET /api/users/:id` - Get user by ID
+  - `POST /api/users` - Create a new user
+  - `PUT /api/users/:id` - Update user
+  - `DELETE /api/users/:id` - Delete user
+  - `GET /api/users/health` - Health check
+
+### Product Service
+- **Purpose**: Manages product catalog
+- **Port**: 3003
+- **Endpoints**:
+  - `GET /api/products` - Get all products (with pagination)
+  - `GET /api/products/:id` - Get product by ID
+  - `POST /api/products` - Create a new product
+  - `PUT /api/products/:id` - Update product
+  - `DELETE /api/products/:id` - Delete product
+  - `GET /api/products/health` - Health check
+
+## 🔌 API Gateway
+
+- **Port**: 3000
+- **Features**:
+  - Routes requests to appropriate microservices
+  - Handles CORS
+  - Request/Response logging
+  - Service health monitoring
+
+## 🔒 Authentication Flow
+
+1. **Register**: `POST /api/auth/register`
+   - Creates a new user account
+   - Returns access and refresh tokens
+
+2. **Login**: `POST /api/auth/login`
+   - Authenticates user credentials
+   - Returns access and refresh tokens
+
+3. **Access Protected Routes**:
+   - Include `Authorization: Bearer <access_token>` in request headers
+
+4. **Refresh Token**: `POST /api/auth/refresh-token`
+   - Get new access token using refresh token
+
+5. **Logout**: `POST /api/auth/logout`
+   - Invalidates the refresh token
 ├── api-gateway.js                  # API Gateway with env configuration
 ├── .env.development                # Gateway environment configuration
 ├── .eslintrc.json
 ├── .prettierrc
-├── .gitignore
-└── package.json
+
+## 📚 API Documentation
+
+Detailed API documentation is available in the Postman collections located in the `misc/postman-collections/` directory:
+
+- `auth-service.postman_collection.json` - Authentication API endpoints
+- `user-service.postman_collection.json` - User management API endpoints
+- `product-service.postman_collection.json` - Product management API endpoints
+- `full-collection.postman_collection.json` - Complete API collection
+
+### Importing to Postman
+
+1. Open Postman
+2. Click "Import" in the top-left corner
+3. Select the desired collection file from `misc/postman-collections/`
+4. Set up the following environment variables in Postman:
+   - `gateway_url`: `http://localhost:3000`
+   - `access_token`: (Will be set after login)
+   - `refreshToken`: (Will be set after login)
+
+### Example Requests
+
+#### Register a New User
+```http
+POST {{gateway_url}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "securePassword123",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+````
+
+#### Login
+
+```http
+POST {{gateway_url}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "securePassword123"
+}
+```
+
+#### Get User Profile
+
+```http
+GET {{gateway_url}}/api/users/me
+Authorization: Bearer {{access_token}}
+```
+
+#### Create Product
+
+```http
+POST {{gateway_url}}/api/products
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "name": "New Product",
+  "description": "Product description",
+  "price": 99.99,
+  "stock": 100
+}
 ```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- PostgreSQL
-- npm or yarn
-
-### Environment Configuration
-
-Each service uses environment variables for configuration. Create `.env.development` files for each service:
-
-**Root directory (API Gateway):**
-
-```bash
-# .env.development
-GATEWAY_PORT=3000
-USER_SERVICE_URL=http://localhost:3001
-PRODUCT_SERVICE_URL=http://localhost:3002
-```
-
-**User Service (`services/user-service/.env.development`):**
-
-```bash
-PORT=3001
-DB_USER=postgres
-DB_PASSWORD=admin
-DB_NAME=user_service_dev
-DB_HOST=localhost
-DB_PORT=5432
-```
-
-**Product Service (`services/product-service/.env.development`):**
-
-```bash
-PORT=3002
-DB_USER=postgres
-DB_PASSWORD=admin
-DB_NAME=product_service_dev
-DB_HOST=localhost
-DB_PORT=5432
-```
+- Node.js (v16+)
+- npm (v8+)
+- PostgreSQL (for each service)
 
 ### Installation
 
-1. **Clone the repository**:
+1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/your-username/microservices-boilerplate.git
    cd microservices-boilerplate
    ```
 
-2. **Install dependencies**:
+2. Install dependencies:
 
    ```bash
-   npm run install:services
+   npm run install:all
    ```
 
-3. **Set up databases**:
+   This will install root dependencies and then install dependencies for each service.
+
+3. Set up environment variables:
+   - Configure database connections in each service's `.env.development` file
+   - Update API Gateway settings in the root `.env.development`
+
+4. Start the services:
 
    ```bash
-   # Create databases for each service
-   cd services/user-service && npm run db:create
-   cd ../product-service && npm run db:create
-   ```
-
-4. **Run migrations**:
-
-   ```bash
-   # Run migrations for all services
-   npm run migrate:user-service
-   npm run migrate:product-service
-   ```
-
-5. **Start all services**:
-
-   ```bash
+   # Development mode (with hot-reload)
    npm run dev
    ```
 
-6. **Start the services**
+5. **Start the services**
    ```bash
    # From root directory
    npm run dev

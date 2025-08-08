@@ -6,6 +6,7 @@ const logger = require('../../shared/utils/logger');
 const errorHandler = require('../../shared/middleware/errorHandler');
 const healthRoutes = require('./routes/health');
 const userRoutes = require('./routes/usersRoutes');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -13,6 +14,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(helmet());
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 

@@ -1,0 +1,168 @@
+{
+  "info": {
+    "name": "Auth Service",
+    "description": "Auth Service collection for user authentication and token management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{gateway_url}}/api/auth/health",
+          "host": ["{{gateway_url}}"],
+          "path": ["api", "auth", "health"]
+        },
+        "description": "Check if Auth Service is running and healthy"
+      },
+      "response": []
+    },
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-auth-type",
+            "value": "token",
+            "description": "Set to 'cookie' for cookie-based auth or 'token' for token response"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securepassword123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{gateway_url}}/api/auth/register",
+          "host": ["{{gateway_url}}"],
+          "path": ["api", "auth", "register"]
+        },
+        "description": "Register a new user. Returns user data and tokens (or sets cookies if x-auth-type is 'cookie')."
+      },
+      "response": []
+    },
+    {
+      "name": "Login User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-auth-type",
+            "value": "token",
+            "description": "Set to 'cookie' for cookie-based auth or 'token' for token response"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"securepassword123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{gateway_url}}/api/auth/login",
+          "host": ["{{gateway_url}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Log in a user. Returns user data and tokens (or sets cookies if x-auth-type is 'cookie')."
+      },
+      "response": []
+    },
+    {
+      "name": "Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-auth-type",
+            "value": "token",
+            "description": "Set to 'cookie' for cookie-based auth or 'token' for token response"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{gateway_url}}/api/auth/refresh-token",
+          "host": ["{{gateway_url}}"],
+          "path": ["api", "auth", "refresh-token"]
+        },
+        "description": "Refresh access token using a refresh token. Returns new tokens (or sets cookies if x-auth-type is 'cookie')."
+      },
+      "response": []
+    },
+    {
+      "name": "Logout User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-auth-type",
+            "value": "token",
+            "description": "Set to 'cookie' to clear auth cookies"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{gateway_url}}/api/auth/logout",
+          "host": ["{{gateway_url}}"],
+          "path": ["api", "auth", "logout"]
+        },
+        "description": "Log out a user. Clears cookies if x-auth-type is 'cookie'."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "gateway_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string",
+      "description": "Refresh token obtained from /api/auth/login or /api/auth/register"
+    }
+  ]
+}

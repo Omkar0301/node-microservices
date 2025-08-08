@@ -4,8 +4,8 @@
   "description": "Node.js microservices boilerplate with Express.js and Sequelize ORM",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"node run-services.js dev\" \"nodemon api-gateway.js\"",
-    "start": "concurrently \"node run-services.js start\" \"node api-gateway.js\"",
+    "dev": "node run-services.js dev && nodemon api-gateway.js",
+    "start": "node run-services.js start && node api-gateway.js",
     "services:dev": "node run-services.js dev",
     "services:start": "node run-services.js start",
     "lint": "eslint . --ext .js,.json",
@@ -35,9 +35,12 @@
   },
   "dependencies": {
     "axios": "^1.11.0",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^4.18.2",
-    "http-proxy-middleware": "^2.0.6"
+    "http-proxy-middleware": "^2.0.6",
+    "jsonwebtoken": "^9.0.2"
   }
 }

@@ -6,8 +6,10 @@ class ServiceRegistry {
       userService: {
         url: process.env.USER_SERVICE_URL,
         endpoints: {
+          createUser: { method: 'POST', path: '/api/users' },
           getUsersByIds: { method: 'POST', path: '/api/users/batch' },
           getUserById: { method: 'GET', path: '/api/users/:id' },
+          getUserByEmail: { method: 'GET', path: '/api/users/by-email?email=:email' },
         },
       },
       productService: {
@@ -16,6 +18,15 @@ class ServiceRegistry {
           getProductsByUserIds: { method: 'POST', path: '/api/products/by-users' },
           getProductsByIds: { method: 'POST', path: '/api/products/batch' },
           getProductById: { method: 'GET', path: '/api/products/:id' },
+        },
+      },
+      authService: {
+        url: process.env.AUTH_SERVICE_URL,
+        endpoints: {
+          register: { method: 'POST', path: '/api/auth/register' },
+          login: { method: 'POST', path: '/api/auth/login' },
+          refreshToken: { method: 'POST', path: '/api/auth/refresh-token' },
+          logout: { method: 'POST', path: '/api/auth/logout' },
         },
       },
     };

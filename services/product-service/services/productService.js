@@ -1,9 +1,19 @@
 const { Product } = require('../models');
 const dataJoiner = require('../../../shared/utils/dataJoiner');
+const httpClient = require('../../../shared/utils/httpClient');
 
 class ProductService {
   async createProduct(productData) {
-    return await Product.create(productData);
+    const { userId } = productData;
+    try {
+      await httpClient.request('userService', 'getUserById', { id: userId }, null, {
+        internal: true,
+      });
+    } catch (error) {
+      throw new Error('Invalid userId: User does not exist');
+    }
+    const product = await Product.create(productData);
+    return product.toJSON();
   }
 
   async getAllProducts(limit, offset, includeUsers = false) {
@@ -22,6 +32,7 @@ class ProductService {
         foreignKey: 'userId',
         joinKey: 'id',
         as: 'user',
+        internal: true,
       });
     }
 

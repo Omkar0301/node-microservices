@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable node/no-unsupported-features/es-syntax */
 const ApiResponse = require('../utils/responseFormatter');
 const logger = require('../utils/logger');
 
-const errorHandler = (err, req, res) => {
-  // eslint-disable-next-line node/no-unsupported-features/es-syntax
+const errorHandler = (err, req, res, next) => {
   const error = { ...err };
   error.message = err.message;
 
@@ -21,7 +22,6 @@ const errorHandler = (err, req, res) => {
       field: error.path,
       message: error.message,
     }));
-
     const response = ApiResponse.validation(errors);
     return res.status(response.statusCode).json(response);
   }
@@ -32,7 +32,6 @@ const errorHandler = (err, req, res) => {
       field: error.path,
       message: `${error.value} already exists`,
     }));
-
     const response = ApiResponse.validation(errors);
     return res.status(response.statusCode).json(response);
   }
