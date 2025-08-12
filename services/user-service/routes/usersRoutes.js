@@ -12,7 +12,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(authenticateJWT,validate(createUserSchema), userController.createUser)
+  .post(authenticateJWT, validate(createUserSchema), userController.createUser)
   .get(authenticateJWT, userController.getAllUsers);
 
 router.route('/by-email').get(authenticateJWT, userController.getUserByEmail);

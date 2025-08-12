@@ -53,6 +53,18 @@ class AuthController {
     );
   });
 
+  emailReset = asyncHandler(async (req, res) => {
+    const { userId, newEmail } = req.body;
+    const updatedUser = await authService.emailReset(userId, newEmail);
+    return res.json(ApiResponse.success(updatedUser, 'Email updated successfully'));
+  });
+
+  passwordReset = asyncHandler(async (req, res) => {
+    const { email, newPassword } = req.body;
+    await authService.passwordReset(email, newPassword);
+    return res.json(ApiResponse.success(null, 'Password reset successfully'));
+  });
+
   logout = asyncHandler(async (req, res) => {
     if (req.headers['x-auth-type'] === 'cookie') {
       authService.clearAuthCookies(res);

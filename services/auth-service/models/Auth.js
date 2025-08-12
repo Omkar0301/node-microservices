@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = sequelize => {
-  const User = sequelize.define(
-    'User',
+  const Auth = sequelize.define(
+    'Auth',
     {
       id: {
         type: DataTypes.UUID,
@@ -17,31 +17,23 @@ module.exports = sequelize => {
           isEmail: true,
         },
       },
-      firstName: {
+      password: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          len: [2, 50],
+          len: [6, 100],
         },
       },
-      lastName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          len: [2, 50],
-        },
-      },
-
       isActive: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
     },
     {
-      tableName: 'users',
+      tableName: 'auth',
       timestamps: true,
     }
   );
 
-  return User;
+  return Auth;
 };
