@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const ApiResponse = require('./responseFormatter');
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env.development') });
 
 const setAuthCookies = (res, accessToken, refreshToken) => {
   res.cookie('accessToken', accessToken, {

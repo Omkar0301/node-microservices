@@ -25,22 +25,23 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "amqplib": "^0.10.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.18.2",
-    "sequelize": "^6.37.1",
+    "helmet": "^7.1.0",
+    "joi": "^17.12.2",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
-    "dotenv": "^16.4.5",
-    "joi": "^17.12.2",
-    "winston": "^3.11.0",
-    "helmet": "^7.1.0",
-    "cors": "^2.8.5"
+    "sequelize": "^6.37.1",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0",
-    "sequelize-cli": "^6.6.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-node": "^11.1.0",
-    "prettier": "^3.2.5"
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "sequelize-cli": "^6.6.2"
   }
 }
